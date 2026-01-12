@@ -179,13 +179,13 @@ This is handled using:
 ## 🎥 Demo & Media
 
 ### 📸 Screenshots
-_Add screenshots of:_
+assets/chat_Ui.png
 - Chat UI
 - Source citation
 - Typing animation
 
 ### 🎬 Demo Video
-_Record a short video showing:_
+short video showing:_   assets/demo_walkthrough.mp4
 - Asking HR questions
 - Follow-up queries
 - Source-based answer
