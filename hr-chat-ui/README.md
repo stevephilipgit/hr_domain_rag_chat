@@ -1,4 +1,4 @@
-# Enterprise HR Domain RAG Chatbot (FastAPI + React + Local LLM)
+# HR Domain RAG Chatbot (FastAPI + React + Local LLM)
 
 An end-to-end **Retrieval-Augmented Generation (RAG)** system built for answering **enterprise HR policy questions** using a domain-specific PDF.  
 The system demonstrates **intent-aware querying, grounded responses, and conversational context handling**, with a clean separation between frontend, backend, and LLM layers.
