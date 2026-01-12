@@ -58,28 +58,7 @@ The chatbot answers **only from the provided document**, ensuring enterprise-saf
 ---
 
 ## 🧬 Architecture Flow
-User (Browser)
-↓
-React Chat UI
-↓
-FastAPI /chat API
-↓
-Intent Detection
-↓
-Query Rewriting (if follow-up)
-↓
-FAISS Vector Search
-↓
-Relevant PDF Chunks
-↓
-Prompt + Context
-↓
-Local LLM (Gemma via Ollama)
-↓
-Grounded Answer + Sources
-↓
-React UI (Markdown + Sources)
-
+User (Browser)  >  React Chat UI > FastAPI /chat API > Intent Detection > Query Rewriting (if follow-up) > FAISS Vector Search > Relevant PDF Chunks > Prompt + Context > Local LLM (Gemma via Ollama) > Grounded Answer + Sources > React UI (Markdown + Sources)
 ---
 
 ## 📄 Document Used (Knowledge Source)
