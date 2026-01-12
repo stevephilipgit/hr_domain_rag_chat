@@ -1,70 +1,240 @@
-# Getting Started with Create React App
+# Enterprise HR Domain RAG Chatbot (FastAPI + React + Local LLM)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An end-to-end **Retrieval-Augmented Generation (RAG)** system built for answering **enterprise HR policy questions** using a domain-specific PDF.  
+The system demonstrates **intent-aware querying, grounded responses, and conversational context handling**, with a clean separation between frontend, backend, and LLM layers.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🔍 Problem Statement
 
-### `npm start`
+Enterprise policy documents (HR handbooks, company policies, SOPs) are:
+- Long and hard to search
+- Interpreted inconsistently
+- Not conversational
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project solves that by enabling:
+- Natural language Q&A over HR policy PDFs
+- Grounded, non-hallucinated answers
+- Context-aware follow-up questions (e.g., *“Explain them”*)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧠 Solution Overview
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This system uses **Retrieval-Augmented Generation (RAG)** combined with:
+- Rule-based **intent classification**
+- Strict **prompt guardrails**
+- **Local LLM inference** for privacy and cost efficiency
 
-### `npm run build`
+The chatbot answers **only from the provided document**, ensuring enterprise-safe responses.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🧱 System Architecture (Layered Design)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1️⃣ Frontend Layer (React)
+- Chat-based UI
+- Markdown-rendered responses
+- Source citations (PDF + page numbers)
+- Typing animation for better UX
 
-### `npm run eject`
+### 2️⃣ API Layer (FastAPI)
+- `/chat` endpoint
+- Session-based memory
+- Intent routing
+- Context compaction
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 3️⃣ RAG Layer
+- PDF ingestion
+- Chunking & embeddings
+- Vector similarity search (FAISS)
+- Context injection into prompts
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4️⃣ LLM Layer
+- **Gemma 1B** via **Ollama**
+- Runs locally (CPU)
+- Zero external API dependency
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🧬 Architecture Flow
+User (Browser)  >  React Chat UI > FastAPI /chat API > Intent Detection > Query Rewriting (if follow-up) > FAISS Vector Search > Relevant PDF Chunks > Prompt + Context > Local LLM (Gemma via Ollama) > Grounded Answer + Sources > React UI (Markdown + Sources)
+---
 
-## Learn More
+## 📄 Document Used (Knowledge Source)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Company HR Policy PDF**
+- Stored at:  data/pdfs/company_policy.pdf
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+This document includes:
+- Code of Conduct
+- Workplace policies
+- Leave & benefits
+- Security & compliance guidelines
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+> ⚠️ The chatbot **does not answer anything outside this document**.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+🔁 Retrieval-Augmented Generation (RAG) – Explained
 
-### Making a Progressive Web App
+The RAG pipeline works as follows:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- PDF is split into semantic chunks
+- Each chunk is converted into vector embeddings
+- User query is embedded and compared using **FAISS**
+- Top relevant chunks are retrieved
+- Retrieved text is injected into a controlled prompt
+- LLM generates an answer **only from retrieved context**
 
-### Advanced Configuration
+Why RAG?
+- Prevents hallucinations
+- Keeps answers document-grounded
+- Enables updates by simply changing PDFs
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+--------------------------------------------------------------------------------------------
 
-### Deployment
+🎯 Intent-Aware Query Handling
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The system uses **rule-based intent classification** to apply the correct prompt behavior.
 
-### `npm run build` fails to minify
+### Supported intents include:
+- Reporting / Contact queries
+- Policy summaries
+- Definitions
+- Procedures
+- Leave & time-off
+- Compensation & benefits
+- Eligibility
+- Consequences
+- General queries
+- Greetings (non-RAG)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Each intent maps to a **strict prompt template** to ensure compliance.
+
+---------------------------------------------------------------------------------
+
+🧠 Context Awareness (Multi-turn Chat)
+
+The chatbot supports **contextual follow-ups** such as:
+
+> User: *What are the company policies?*  
+> User: *Explain them*
+
+This is handled using:
+- Topic tracking
+- Follow-up query rewriting
+- Context compaction (no full chat history passed)
+
+------------------------------------------------------------------------------------
+ 🛠️ Tools & Libraries Used
+
+### Backend
+- **Python**
+- **FastAPI**
+- **LangChain**
+- **FAISS**
+- **HuggingFace Sentence Transformers**
+- **Ollama**
+- **Gemma 1B**
+
+### Frontend
+- **React**
+- **React Markdown**
+- **CSS animations**
+
+### Other
+- **Git & GitHub**
+- **Virtual Environments**
+- **REST APIs**
+
+--------------------------------------------------------------------------------------------
+
+## 🔐 Local LLM Choice (Why Gemma + Ollama?)
+
+- Runs completely **offline**
+- No API costs
+- Suitable for **enterprise privacy**
+- Easy to swap with cloud LLMs in production
+
+> In production, the LLM layer can be replaced with OpenAI, Azure OpenAI, or other managed APIs.
+
+--------------------------------------------------------------------------------------------
+
+## 🌐 Deployment Strategy
+
+ Current Mode
+- **Local LLM (Gemma)**
+- Backend + UI runnable locally
+- Cloud deployment runs in **demo mode**
+
+ Demo Mode (Cloud-safe)
+- UI & API are publicly accessible
+- LLM responses are disabled with clear messaging
+- Architecture remains visible and testable
+
+------------------------------------------------------------------------------------------------
+
+## 🎥 Demo & Media
+
+### 📸 Screenshots
+_Add screenshots of:_
+- Chat UI
+- Source citation
+- Typing animation
+
+### 🎬 Demo Video
+_Record a short video showing:_
+- Asking HR questions
+- Follow-up queries
+- Source-based answer
+- 
+
+
+---
+
+## 🧪 Example Queries
+
+- What is the Employee Code of Conduct?
+- Whom should I contact in case of harassment?
+- Explain the leave policy
+- What are the workplace rules?
+- Explain them (follow-up)
+
+---
+
+## 📌 Applications
+
+- Internal HR chat assistants
+- Policy compliance tools
+- Enterprise knowledge bases
+- Onboarding support systems
+- Secure document Q&A systems
+
+---
+
+## 🚀 Future Enhancements
+
+- Entity-aware follow-up expansion
+- Cloud LLM integration
+- Authentication & RBAC
+- Multi-document support
+- Analytics & feedback loop
+
+---
+
+## 👨‍💻 Author
+
+**Steve Philip**  
+AI / ML | GenAI | RAG Systems  
+GitHub: https://github.com/stevephilipgit
+
+---
+
+## 📜 License
+
+This project is for educational and portfolio purposes.
+
+
+
