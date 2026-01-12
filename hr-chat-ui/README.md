@@ -1,70 +1,61 @@
-# Getting Started with Create React App
+# Enterprise HR Domain RAG Chatbot (FastAPI + React + Local LLM)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An end-to-end **Retrieval-Augmented Generation (RAG)** system built for answering **enterprise HR policy questions** using a domain-specific PDF.  
+The system demonstrates **intent-aware querying, grounded responses, and conversational context handling**, with a clean separation between frontend, backend, and LLM layers.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🔍 Problem Statement
 
-### `npm start`
+Enterprise policy documents (HR handbooks, company policies, SOPs) are:
+- Long and hard to search
+- Interpreted inconsistently
+- Not conversational
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project solves that by enabling:
+- Natural language Q&A over HR policy PDFs
+- Grounded, non-hallucinated answers
+- Context-aware follow-up questions (e.g., *“Explain them”*)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧠 Solution Overview
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This system uses **Retrieval-Augmented Generation (RAG)** combined with:
+- Rule-based **intent classification**
+- Strict **prompt guardrails**
+- **Local LLM inference** for privacy and cost efficiency
 
-### `npm run build`
+The chatbot answers **only from the provided document**, ensuring enterprise-safe responses.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🧱 System Architecture (Layered Design)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1️⃣ Frontend Layer (React)
+- Chat-based UI
+- Markdown-rendered responses
+- Source citations (PDF + page numbers)
+- Typing animation for better UX
 
-### `npm run eject`
+### 2️⃣ API Layer (FastAPI)
+- `/chat` endpoint
+- Session-based memory
+- Intent routing
+- Context compaction
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 3️⃣ RAG Layer
+- PDF ingestion
+- Chunking & embeddings
+- Vector similarity search (FAISS)
+- Context injection into prompts
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4️⃣ LLM Layer
+- **Gemma 1B** via **Ollama**
+- Runs locally (CPU)
+- Zero external API dependency
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🧬 Architecture Flow
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
