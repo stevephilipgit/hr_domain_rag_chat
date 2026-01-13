@@ -31,6 +31,7 @@ The chatbot answers **only from the provided document**, ensuring enterprise-saf
 
 ---
 
+![Visual Flow](assets/architecture_flow_visual.png)
 ## 🧱 System Architecture (Layered Design)
 
 ### 1️⃣ Frontend Layer (React)
