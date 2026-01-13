@@ -58,9 +58,29 @@ The chatbot answers **only from the provided document**, ensuring enterprise-saf
 
 ---
 
-## 🧬 Architecture Flow
-User (Browser)  >  React Chat UI > FastAPI /chat API > Intent Detection > Query Rewriting (if follow-up) > FAISS Vector Search > Relevant PDF Chunks > Prompt + Context > Local LLM (Gemma via Ollama) > Grounded Answer + Sources > React UI (Markdown + Sources)
----
+## 🧬 Architecture flowchart 
+    U[User<br/>Web Browser] -->|Ask Question| UI[React Chat UI]
+
+    UI -->|POST /chat| API[FastAPI Backend]
+
+    API --> INTENT[Intent Detection<br/>Rule-based]
+    INTENT -->|Follow-up?| REWRITE[Query Rewriting<br/>Context Awareness]
+
+    REWRITE --> RETRIEVE[Vector Retriever<br/>FAISS]
+
+    RETRIEVE --> PDF[HR Policy PDF<br/>Chunked Text]
+    PDF --> RETRIEVE
+
+    RETRIEVE --> PROMPT[Prompt Builder<br/>Intent-specific Rules]
+
+    PROMPT --> LLM[Local LLM<br/>Gemma 1B via Ollama]
+
+    LLM --> RESPONSE[Grounded Answer<br/>+ Sources]
+
+    RESPONSE --> API
+    API --> UI
+    UI -->|Render Markdown<br/>+ Sources| U
+
 
 ## 📄 Document Used (Knowledge Source)
 
